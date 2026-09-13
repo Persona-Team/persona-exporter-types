@@ -9,15 +9,26 @@ pub trait FromWithMeasurement<T> {
 }
 
 pub trait IntoWithMeasurement<T> {
+    // type Target;
     fn into_with_name(self, measurement: &str) -> T;
 }
 
-impl<Source, Target> IntoWithMeasurement<Target> for Source
+pub trait FinishLineProtocol {
+    fn finish(self, timestamp: i64) -> Vec<u8>;
+}
+
+impl FinishLineProtocol for LineProtocolBuilder<Vec<u8>, AfterField> {
+    fn finish(self, timestamp: i64) -> Vec<u8> {
+        self.timestamp(timestamp).close_line().build()
+    }
+}
+
+impl<T, U> IntoWithMeasurement<U> for T
 where
-    Target: FromWithMeasurement<Source>,
+    U: FromWithMeasurement<T>,
 {
-    fn into_with_name(self, measurement: &str) -> Target {
-        Target::from_with_name(self, measurement)
+    fn into_with_name(self, measurement: &str) -> U {
+        U::from_with_name(self, measurement)
     }
 }
 
@@ -86,8 +97,17 @@ impl FromWithMeasurement<&NetworkInfo> for LineProtocolBuilder<Vec<u8>, AfterFie
     }
 }
 
-impl FromWithMeasurement<&CpuInfo> for LineProtocolBuilder<Vec<u8>, AfterField> {
-    fn from_with_name(value: &CpuInfo, measurement: &str) -> Self {
+impl FromWithMeasurement<&CpuCoreInfo> for LineProtocolBuilder<Vec<u8>, AfterField> {
+    fn from_with_name(value: &CpuCoreInfo, measurement: &str) -> Self {
+        LineProtocolBuilder::new()
+            .measurement(measurement)
+            .tag("os_name", &value.os_name)
+            .field("frequency", value.frequency)
+            .field("usage", value.cpu_usage as f64)
+    }
+}
+impl FromWithMeasurement<&CpuListInfo> for LineProtocolBuilder<Vec<u8>, AfterField> {
+    fn from_with_name(value: &CpuListInfo, measurement: &str) -> Self {
         LineProtocolBuilder::new()
             .measurement(measurement)
             .field("usage", value.cpu_usage as f64)
@@ -141,6 +161,7 @@ impl FromWithMeasurement<&ProcessInfo> for LineProtocolBuilder<Vec<u8>, AfterFie
 //     }
 // }
 
+#[allow(unused)]
 impl FromWithMeasurement<&SendInfo> for LineProtocolBuilder<Vec<u8>, AfterField> {
     fn from_with_name(value: &SendInfo, measurement: &str) -> Self {
         LineProtocolBuilder::new()
@@ -148,6 +169,7 @@ impl FromWithMeasurement<&SendInfo> for LineProtocolBuilder<Vec<u8>, AfterField>
             .field("url", &*value.url)
     }
 }
+
 fn unknown_or_value(v: &str) -> &str {
     if v.is_empty() {
         DEFAULT_UNKNOWN_MESSAGE

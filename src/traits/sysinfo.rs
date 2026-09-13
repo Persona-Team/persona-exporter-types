@@ -1,7 +1,7 @@
 use crate::DEFAULT_UNKNOWN_MESSAGE;
 use crate::metrics::additional_structs::*;
 use crate::metrics::{LoadAverage, ProcessInfo};
-use sysinfo::{CpuRefreshKind, LoadAvg, Process, ProcessStatus as SysProcessStatus, System};
+use sysinfo::{LoadAvg, Process, ProcessStatus as SysProcessStatus};
 
 impl From<sysinfo::DiskUsage> for DiskUsage {
     fn from(value: sysinfo::DiskUsage) -> Self {
@@ -35,34 +35,55 @@ impl From<SysProcessStatus> for ProcessStatus {
     }
 }
 
-impl From<&Process> for ProcessInfo {
-    fn from(value: &Process) -> Self {
-        let mut cpu_cores = System::new();
-        cpu_cores.refresh_cpu_list(CpuRefreshKind::everything().without_cpu_usage());
-        let cpu_cores = cpu_cores.cpus().len() as f32;
-        let cpu_usage = value.cpu_usage();
-        let calculate_cpu_usage = if cpu_cores != 0.0 && cpu_usage != 0.0 {
-            cpu_usage / cpu_cores
-        } else {
-            0.0
-        };
+impl ProcessInfo {
+    pub fn from_process(value: &mut Process) -> Self {
+        // let raw_cpu_usage = value.cpu_usage();
+        //
+        // let calculate_cpu_usage = if raw_cpu_usage != 0.0 || cpu_cores != 0 {
+        //   raw_cpu_usage / cpu_cores as f32
+        // } else { 0.0 };
 
         let uid = value
             .user_id()
             .map(|id| id.to_string())
-            .filter(|s| !s.is_empty())
             .unwrap_or_else(|| DEFAULT_UNKNOWN_MESSAGE.to_string());
         let gid = value
             .group_id()
             .map(|id| id.to_string())
-            .filter(|s| !s.is_empty())
             .unwrap_or_else(|| DEFAULT_UNKNOWN_MESSAGE.to_string());
         ProcessInfo {
             name: value.name().to_str().unwrap().to_string(),
             status: ProcessStatus::from(value.status()),
             disk_usage: DiskUsage::from(value.disk_usage()),
             program_id: value.pid().to_string(),
-            cpu_usage: calculate_cpu_usage,
+            cpu_usage: value.cpu_usage(),
+            memory_usage: value.memory(),
+            virtual_memory: value.virtual_memory(),
+            run_time: value.run_time(),
+            start_time: value.start_time(),
+            user_id: uid,
+            group_id: gid,
+        }
+    }
+}
+
+impl From<&Process> for ProcessInfo {
+    fn from(value: &Process) -> Self {
+        let uid = value
+            .user_id()
+            .map(|id| id.to_string())
+            .unwrap_or(DEFAULT_UNKNOWN_MESSAGE.to_string());
+        let gid = value
+            .group_id()
+            .map(|id| id.to_string())
+            .unwrap_or(DEFAULT_UNKNOWN_MESSAGE.to_string());
+
+        ProcessInfo {
+            name: value.name().to_str().unwrap().to_string(),
+            status: ProcessStatus::from(value.status()),
+            disk_usage: DiskUsage::from(value.disk_usage()),
+            program_id: value.pid().to_string(),
+            cpu_usage: value.cpu_usage(),
             memory_usage: value.memory(),
             virtual_memory: value.virtual_memory(),
             run_time: value.run_time(),

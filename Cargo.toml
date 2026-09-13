@@ -1,6 +1,6 @@
 [package]
 name = "persona-exporter-types"
-version = "2.1.1"
+version = "2.2.1"
 edition = "2024"
 description = "Data types for persona-exporter"
 repository = "https://github.com/0DoubleDare/persona-exporter-types"
@@ -10,6 +10,9 @@ license = "MIT OR Apache-2.0"
 serde = { version = "1.0.228", features = ["derive"], optional = true }
 influxdb-line-protocol = { version = "2.0.0" , optional = true }
 sysinfo = { version = "0.39.6", optional = true }
+
+smallvec = { version = "1.16.1", default-features = false,  features = ["serde"] }
+compact_str = { version = "0.10.0", default-features = false, features = ["serde"] }
 
 [features]
 default = ["serde", "convert-data-unit"]
