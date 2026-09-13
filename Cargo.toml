@@ -1,6 +1,6 @@
 [package]
 name = "persona-exporter-types"
-version = "2.1.1"
+version = "2.2.1"
 edition = "2024"
 description = "Data types for persona-exporter"
 repository = "https://github.com/0DoubleDare/persona-exporter-types"
