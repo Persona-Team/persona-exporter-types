@@ -1,4 +1,5 @@
 pub mod additional_structs;
+pub mod traits;
 
 use crate::metrics::additional_structs::{DiskUsage, ProcessStatus};
 
@@ -17,14 +18,14 @@ pub struct ServerMetrics {
     /// Network indicators
     pub network: Option<NetworkInfo>,
     /// CPU indicators
-    pub cpu: Option<CpuInfo>,
+    pub cpu: Option<CpuListInfo>,
     /// Components indicators
-    pub components: Option<ComponentsInfo>,
+    pub components: Option<ComponentListInfo>,
 
     /// Metric showing the average load on processor threads
     // pub load_average: Option<LoadAverage>,
     /// Time in UNIX when the metrics were recorded
-    pub time: u64,
+    pub time: i64,
 }
 
 /// General system information: kernel version, username,
@@ -49,6 +50,7 @@ pub struct SystemInfo {
     /// for example, if you are using Ubuntu, the field
     /// value will be `["debian"]`, since Ubuntu is a derivative of Debian.
     pub distribution_id_like: Vec<String>,
+    // pub distribution_id_like: SmallVec::<[CompactString; 2]>,
     /// The UNIX time at which the system booted
     pub boot_time: u64,
     /// System uptime
@@ -126,7 +128,7 @@ pub struct NetworkInfo {
 /// individual components (circuit boards, processor cores, etc.).
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Default, Debug, Clone)]
-pub struct ComponentsInfo {
+pub struct ComponentListInfo {
     /// Components count
     pub count: usize,
     /// Checks whether the component field is empty.
@@ -137,16 +139,25 @@ pub struct ComponentsInfo {
 /// Statistics on the machine's processor
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Default, Debug, Clone)]
-pub struct CpuInfo {
+pub struct CpuListInfo {
     /// System CPU usage. Measured as a percentage from 0%-100%
     pub cpu_usage: f32,
     /// Number of processor threads
     pub threads: usize,
     /// Number of physical processor cores
     pub physical_core_count: usize,
+    pub cpu_cores: Vec<CpuCoreInfo>,
 }
 
-/// Processor thread information, used in [`ComponentsInfo`]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+#[derive(Default, Debug, Clone)]
+pub struct CpuCoreInfo {
+    pub frequency: u64,
+    pub os_name: String,
+    pub cpu_usage: f32,
+}
+
+/// Processor thread information, used in [`ComponentListInfo`]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Default, Debug, Clone)]
 pub struct ComponentInfo {
@@ -162,7 +173,7 @@ pub struct ComponentInfo {
     pub max_temp: f32,
 }
 
-/// Load Average structure for `load_avg` field in [CpuInfo]
+/// Load Average structure for `load_avg` field in [CpuListInfo]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Default, Debug, Clone)]
 pub struct LoadAverage {

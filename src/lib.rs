@@ -21,8 +21,8 @@
 //!
 //! Now, here is a brief summary of the information, making full use of
 //! all the structures like [`metrics::SystemInfo`], [`metrics::MemoryInfo`], [`metrics::DiskInfo`], [`metrics::NetworkInfo`],
-//! [`metrics::CpuInfo`],
-//! [`metrics::ComponentsInfo`] with [`metrics::ComponentInfo`],
+//! [`metrics::CpuListInfo`],
+//! [`metrics::ComponentListInfo`] with [`metrics::ComponentInfo`],
 //! [`metrics::ProcessListInfo`] with [`metrics::ProcessInfo`] :
 //!
 //! ```json
@@ -254,7 +254,7 @@
 //! In addition to the structures themselves, the crate provides
 //! functions for converting them: see [`ConvertTo`]
 
-const DEFAULT_UNKNOWN_MESSAGE: &str = "unknown";
+pub const DEFAULT_UNKNOWN_MESSAGE: &str = "unknown";
 pub mod metrics;
 pub mod traits;
 
