@@ -1,6 +1,5 @@
 use crate::metrics::{
-    ComponentListInfo, CpuListInfo, DiskInfo, NetworkInfo, ProcessInfo,
-    ProcessListInfo, SystemInfo,
+    ComponentListInfo, CpuListInfo, DiskInfo, NetworkInfo, ProcessInfo, ProcessListInfo, SystemInfo,
 };
 
 pub trait Clear {

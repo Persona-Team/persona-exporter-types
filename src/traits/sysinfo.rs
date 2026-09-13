@@ -1,6 +1,6 @@
+use crate::DEFAULT_UNKNOWN_MESSAGE;
 use crate::metrics::additional_structs::*;
 use crate::metrics::{LoadAverage, ProcessInfo};
-use crate::DEFAULT_UNKNOWN_MESSAGE;
 use sysinfo::{LoadAvg, Process, ProcessStatus as SysProcessStatus};
 
 impl From<sysinfo::DiskUsage> for DiskUsage {
@@ -103,4 +103,3 @@ impl From<LoadAvg> for LoadAverage {
         }
     }
 }
-
