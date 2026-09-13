@@ -1,4 +1,6 @@
 # Persona Exporter Types
+[![Build and test](https://github.com/0DoubleDare/persona-exporter-types/actions/workflows/main.yml/badge.svg)](https://github.com/0DoubleDare/persona-exporter-types/actions/workflows/main.yml)
+![GitHub repo size](https://img.shields.io/github/repo-size/0DoubleDare/persona-exporter-types)
 
 `persona-exporter-types` это крейт который предоставляет типы данных для `persona-exporter`.
 
