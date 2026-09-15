@@ -190,40 +190,40 @@ pub struct LoadAverage {
 pub struct SendInfo {
     pub url: String,
 }
-///! System process information: top N processes and information from the exporter itself.
+/// System process information: top N processes and information from the exporter itself.
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone, Default)]
 pub struct ProcessListInfo {
-    ///! Exporter information
+    /// Exporter information
     pub exporter_metrics: Option<ProcessInfo>,
     /// Information on processes
     pub process_list: Vec<ProcessInfo>,
 }
 
-///! Information about the process
+/// Information about the process
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[derive(Debug, Clone)]
 pub struct ProcessInfo {
-    ///! The name of the process running on the system
+    /// The name of the process running on the system
     pub name: String,
-    ///! Process status at the time of recording. See also [`ProcessStatus`]
+    /// Process status at the time of recording. See also [`ProcessStatus`]
     pub status: ProcessStatus,
-    ///! Disk space usage information. See also [`DiskUsage`]
+    /// Disk space usage information. See also [`DiskUsage`]
     pub disk_usage: DiskUsage,
-    ///! Unique process identifier
+    /// Unique process identifier
     pub program_id: String,
-    ///! Information about process usage (usually as a percentage) at a given point in time
+    /// Information about process usage (usually as a percentage) at a given point in time
     pub cpu_usage: f32,
-    ///! Information about RAM usage (in bytes or another unit of measurement) at this moment in time
+    /// Information about RAM usage (in bytes or another unit of measurement) at this moment in time
     pub memory_usage: u64,
-    ///! Information on swap file usage
+    /// Information on swap file usage
     pub virtual_memory: u64,
-    ///! Process Lifespan in seconds
+    /// Process Lifespan in seconds
     pub run_time: u64,
-    ///! Displays the time the process was started in UNIX time
+    /// Displays the time the process was started in UNIX time
     pub start_time: u64,
-    ///! User ID of the user who started the process
+    /// User ID of the user who started the process
     pub user_id: String,
-    ///! ID of the group that initiated the process
+    /// ID of the group that initiated the process
     pub group_id: String,
 }
