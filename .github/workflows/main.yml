@@ -8,61 +8,80 @@ on:
     tags:
       - 'v*'
 
+
 jobs:
   test:
-    name: Building and test code
+    name: Test
     runs-on: ubuntu-latest
-#    outputs:
-#      package_name: ${{ steps.package_name.outputs.pkg_name }}
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: ./.github/workflows/test.yml
 
-      - name: Install rust
-        uses: dtolnay/rust-toolchain@stable
-
-      - uses: swatinem/rust-cache@v2
-        with:
-          shared-key: "co-cache-${{ hashFiles('**/Cargo.lock**') }}"
-
-      - name: Run test
-        run: |
-          cargo fmt -- --check
-          cargo test
-          cargo test --doc
-          cargo publish --dry-run
-
-  publish-and-release:
-    name: Publish and release.yml
+  release:
+    name: Publish and release
     runs-on: ubuntu-latest
-    needs: test
-    environment: publish-and-release-crate
     permissions:
       contents: write
-    if: startsWith(github.ref, 'refs/tags/v')
+    environment: publish-and-release-crate
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: ./.github/workflows/publish.yml
 
-      - name: Install rust
-        uses: dtolnay/rust-toolchain@stable
 
-      - uses: swatinem/rust-cache@v2
-        with:
-          shared-key: "co-cache-${{ hashFiles('**/Cargo.lock**') }}"
 
-      - name: Login to crates.io
-        run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
-
-      - name: Publish to crates.io
-        run: cargo publish
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: v${{ github.ref_name }}
-          name: Release v${{ github.ref_name }}
-          generate_release_notes: true
-          draft: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#jobs:
+#  test:
+#    name: Building and test code
+#    runs-on: ubuntu-latest
+#    outputs:
+#      package_name: ${{ steps.package_name.outputs.pkg_name }}
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Install rust
+#        uses: dtolnay/rust-toolchain@stable
+#
+#      - uses: swatinem/rust-cache@v2
+#        with:
+#          shared-key: "co-cache-${{ hashFiles('**/Cargo.lock**') }}"
+#
+#      - name: Run test
+#        run: |
+#          cargo fmt -- --check
+#          cargo test
+#          cargo test --doc
+#          cargo publish --dry-run
+#
+#  publish-and-release:
+#    name: Publish and release.yml
+#    runs-on: ubuntu-latest
+#    needs: test
+#    environment: publish.yml-and-release-crate
+#    permissions:
+#      contents: write
+#    if: startsWith(github.ref, 'refs/tags/v')
+#    steps:
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Install rust
+#        uses: dtolnay/rust-toolchain@stable
+#
+#      - uses: swatinem/rust-cache@v2
+#        with:
+#          shared-key: "co-cache-${{ hashFiles('**/Cargo.lock**') }}"
+#
+#      - name: Login to crates.io
+#        run: cargo login ${{ secrets.CRATES_IO_TOKEN }}
+#
+#      - name: Publish to crates.io
+#        run: cargo publish.yml
+#
+#      - name: Create GitHub Release
+#        uses: softprops/action-gh-release@v2
+#        with:
+#          tag_name: v${{ github.ref_name }}
+#          name: Release v${{ github.ref_name }}
+#          generate_release_notes: true
+#          draft: true
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

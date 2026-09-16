@@ -80,7 +80,6 @@ macro_rules! insert_convert_to_impl {
         $(
             impl ConvertTo for $t {
                 #[doc = concat!["Converting a value of type **", stringify!($t), "** from one unit to another" ]]
-                ///
                 /// For more information about conversition, see [`ConvertTo`]
                 fn to_dataunit(self, from: DataUnit, to: DataUnit) -> f64 {
                     convert_from_to(self as f64, from, to)
