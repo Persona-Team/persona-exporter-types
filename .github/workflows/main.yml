@@ -17,8 +17,9 @@ jobs:
       - uses: ./.github/workflows/test.yml
 
   release:
-    name: Publish and release
+    name: Publish and Release
     runs-on: ubuntu-latest
+    needs: test
     permissions:
       contents: write
     environment: publish-and-release-crate
